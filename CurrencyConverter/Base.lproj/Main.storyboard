@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="f3T-0h-zIv">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="qCM-Ql-g4m">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xbj-b8-bEO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController id="f3T-0h-zIv" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NSM-7U-xo6">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="s4h-J1-KEN"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="-1305" y="20"/>
+        </scene>
+        <!--Currency Converter-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CurrencyConverter" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="y1z-99-5Tx">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Amount" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iXA-l2-hkH">
+                                <rect key="frame" x="16" y="104" width="382" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LRX-BW-UQD">
+                                <rect key="frame" x="249.5" y="154" width="148.5" height="22"/>
+                                <state key="normal" title=" From Currency " image="chevron.down" catalog="system">
+                                    <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="didTapFromCurrencyButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AN4-Z2-6tg"/>
+                                </connections>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="72q-nd-Yic">
+                                <rect key="frame" x="0.0" y="192" width="414" height="670"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" sectionInsetReference="safeArea" id="Uge-IT-Fws">
+                                    <size key="itemSize" width="100" height="100"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ToCurrencyCell" id="p3j-rh-4Gm" customClass="ToCurrencyCollectionViewCell" customModule="CurrencyConverter" customModuleProvider="target">
+                                        <rect key="frame" x="16" y="0.0" width="100" height="100"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="MC7-Wa-VXN">
+                                            <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </collectionViewCellContentView>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please enter amount" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KQq-tL-xog">
+                                <rect key="frame" x="16" y="377" width="382" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="lcc-PJ-3Sd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="72q-nd-Yic" firstAttribute="leading" secondItem="ex5-1V-avr" secondAttribute="leading" id="2kE-l3-wt0"/>
+                            <constraint firstItem="ex5-1V-avr" firstAttribute="trailing" secondItem="72q-nd-Yic" secondAttribute="trailing" id="8Qu-eT-HIF"/>
+                            <constraint firstItem="ex5-1V-avr" firstAttribute="bottom" secondItem="72q-nd-Yic" secondAttribute="bottom" id="LnR-lb-pyu"/>
+                            <constraint firstItem="ex5-1V-avr" firstAttribute="trailing" secondItem="LRX-BW-UQD" secondAttribute="trailing" constant="16" id="TDb-HN-6RH"/>
+                            <constraint firstItem="iXA-l2-hkH" firstAttribute="centerX" secondItem="ex5-1V-avr" secondAttribute="centerX" id="Yw7-U0-YNg"/>
+                            <constraint firstItem="72q-nd-Yic" firstAttribute="top" secondItem="LRX-BW-UQD" secondAttribute="bottom" constant="16" id="Zx8-Ov-kav"/>
+                            <constraint firstItem="LRX-BW-UQD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ex5-1V-avr" secondAttribute="leading" id="hwY-up-I0b"/>
+                            <constraint firstItem="iXA-l2-hkH" firstAttribute="leading" secondItem="ex5-1V-avr" secondAttribute="leading" constant="16" id="kwp-ir-QC0"/>
+                            <constraint firstItem="KQq-tL-xog" firstAttribute="centerY" secondItem="72q-nd-Yic" secondAttribute="centerY" constant="-100" id="mpk-pa-xGp"/>
+                            <constraint firstItem="KQq-tL-xog" firstAttribute="leading" secondItem="72q-nd-Yic" secondAttribute="leading" constant="16" id="qQx-b1-QIF"/>
+                            <constraint firstItem="KQq-tL-xog" firstAttribute="centerX" secondItem="72q-nd-Yic" secondAttribute="centerX" id="wFX-Xf-XJP"/>
+                            <constraint firstItem="iXA-l2-hkH" firstAttribute="bottom" secondItem="LRX-BW-UQD" secondAttribute="top" constant="-16" id="yZq-FE-Rpx"/>
+                            <constraint firstItem="iXA-l2-hkH" firstAttribute="top" secondItem="ex5-1V-avr" secondAttribute="top" constant="16" id="zMz-QN-ajB"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="ex5-1V-avr"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Currency Converter" id="MK6-fa-Znm"/>
+                    <connections>
+                        <outlet property="errorLabel" destination="KQq-tL-xog" id="C2w-ol-mfl"/>
+                        <outlet property="fromCurrencyButton" destination="LRX-BW-UQD" id="Gik-zS-STk"/>
+                        <outlet property="fromCurrencyTextField" destination="iXA-l2-hkH" id="DGt-2a-hgC"/>
+                        <outlet property="toCurrencyCollectionView" destination="72q-nd-Yic" id="fz4-pE-fXK"/>
+                    </connections>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="-352.17391304347831" y="18.75"/>
+        </scene>
+        <!--List Of Currencies View Controller-->
+        <scene sceneID="7yq-4S-VP5">
+            <objects>
+                <tableViewController id="eHc-v4-Ess" customClass="ListOfCurrenciesViewController" customModule="CurrencyConverter" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="1Ik-Jh-uJX">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="uqK-RW-NsY">
+                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uqK-RW-NsY" id="Cro-ix-uSc">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="eHc-v4-Ess" id="k7n-d6-cLQ"/>
+                            <outlet property="delegate" destination="eHc-v4-Ess" id="kcq-Yn-FBq"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KoR-lr-tnH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="557" y="19"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="chevron.down" catalog="system" width="128" height="72"/>
+    </resources>
+</document>
