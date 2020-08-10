@@ -73,12 +73,20 @@ class ViewController: UIViewController, CurrencyProtocolDelegate {
                     self.currencyAbrv.removeAll()
                     self.amounts.removeAll()
 
-                    self.currencyAbrv.append(contentsOf: exchangeRates.keys)
-                    self.amounts.append(contentsOf: exchangeRates.values)
+                    let rates = exchangeRates.sorted { (first, second) -> Bool in
+                        first < second
+                    }
+
+                    for rate in rates {
+                        self.currencyAbrv.append(rate.key)
+                        self.amounts.append(rate.value)
+                    }
 
                     self.toCurrencyCollectionView.reloadData()
                     self.errorLabel.isHidden = true
+
                 } else {
+
                     self.toCurrencyCollectionView.isHidden = true
                     self.errorLabel.isHidden = false
                     self.errorLabel.text = errorString
@@ -102,7 +110,7 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ToCurrencyCell", for: indexPath) as! ToCurrencyCollectionViewCell
         cell.currencyLabel.text = String(currencyAbrv[indexPath.row].dropFirst(3))
-        cell.amountLabel.text = String(amounts[indexPath.row])
+        cell.amountLabel.text = String(format: "%.2f", amounts[indexPath.row])
         return cell
     }
 }
