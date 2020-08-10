@@ -11,7 +11,6 @@
         <!--Navigation Controller-->
         <scene sceneID="qCM-Ql-g4m">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Xbj-b8-bEO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController id="f3T-0h-zIv" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NSM-7U-xo6">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -21,14 +20,14 @@
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="s4h-J1-KEN"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xbj-b8-bEO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1305" y="20"/>
         </scene>
         <!--Currency Converter-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CurrencyConverter" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CurrencyConverterViewController" customModule="CurrencyConverter" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="y1z-99-5Tx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -36,15 +35,18 @@
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Amount" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="iXA-l2-hkH">
                                 <rect key="frame" x="16" y="104" width="382" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LRX-BW-UQD">
+                            <button opaque="NO" contentMode="right" semanticContentAttribute="forceRightToLeft" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" lineBreakMode="tailTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LRX-BW-UQD">
                                 <rect key="frame" x="249.5" y="154" width="148.5" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="148.5" id="kfh-yD-Sbm"/>
+                                </constraints>
                                 <state key="normal" title=" From Currency " image="chevron.down" catalog="system">
                                     <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="didTapFromCurrencyButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AN4-Z2-6tg"/>
+                                    <action selector="didTapFromCurrencyButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dtd-m5-ZtM"/>
                                 </connections>
                             </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="72q-nd-Yic">
@@ -85,7 +87,6 @@
                             <constraint firstItem="ex5-1V-avr" firstAttribute="trailing" secondItem="LRX-BW-UQD" secondAttribute="trailing" constant="16" id="TDb-HN-6RH"/>
                             <constraint firstItem="iXA-l2-hkH" firstAttribute="centerX" secondItem="ex5-1V-avr" secondAttribute="centerX" id="Yw7-U0-YNg"/>
                             <constraint firstItem="72q-nd-Yic" firstAttribute="top" secondItem="LRX-BW-UQD" secondAttribute="bottom" constant="16" id="Zx8-Ov-kav"/>
-                            <constraint firstItem="LRX-BW-UQD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ex5-1V-avr" secondAttribute="leading" id="hwY-up-I0b"/>
                             <constraint firstItem="iXA-l2-hkH" firstAttribute="leading" secondItem="ex5-1V-avr" secondAttribute="leading" constant="16" id="kwp-ir-QC0"/>
                             <constraint firstItem="KQq-tL-xog" firstAttribute="centerY" secondItem="72q-nd-Yic" secondAttribute="centerY" constant="-100" id="mpk-pa-xGp"/>
                             <constraint firstItem="KQq-tL-xog" firstAttribute="leading" secondItem="72q-nd-Yic" secondAttribute="leading" constant="16" id="qQx-b1-QIF"/>
@@ -103,6 +104,7 @@
                         <outlet property="toCurrencyCollectionView" destination="72q-nd-Yic" id="fz4-pE-fXK"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-352.17391304347831" y="18.75"/>
         </scene>

@@ -10,6 +10,7 @@ import UIKit
 
 class ToCurrencyCollectionViewCell: UICollectionViewCell {
     @IBOutlet var currencyLabel: UILabel!
+    @IBOutlet var fullNameLabel: UILabel!
     @IBOutlet var amountLabel: UILabel!
 
 }

@@ -13,34 +13,39 @@ protocol CurrencyProtocolDelegate {
     func getFromCurrency(currency: String)
 }
 
-class ViewController: UIViewController, CurrencyProtocolDelegate {
+class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegate {
 
     @IBOutlet var fromCurrencyTextField: UITextField!
     @IBOutlet var fromCurrencyButton: UIButton!
     @IBOutlet var toCurrencyCollectionView: UICollectionView!
     @IBOutlet var errorLabel: UILabel!
 
-    var api = CurrencyAPI()
-    var currencies = [String: String]()
-    var currencyFullNames = [String]()
-    var currencyAbrv = [String]()
-    var amounts = [Double]()
-
-    var fromCurrency: String?
+    private var api = CurrencyAPI()
+    private var currencies = [String: String]()
+    private var sortedCurrencies = Array<(key: String, value: String)>()
+    private var currencyAbrv = [String]()
+    private var currencyFullNames = [String]()
+    private var amounts = [Double]()
+    private var fromCurrency: String?
 
     override func awakeFromNib() {
+
         api.loadListOfCurrencies { currencies in
             self.currencies = currencies
-            self.currencies["USD"] = "US Dollar"
-            self.currencyFullNames.append(contentsOf: currencies.values)
-
             self.getExchangeRates()
-        }
 
+            self.sortedCurrencies = currencies.sorted(by: {$0.key < $1.key})
+            for currency in self.sortedCurrencies {
+                self.currencyFullNames.append(currency.value)
+            }
+        }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        addDoneButtonOnKeyboard()
+        fromCurrencyButton.contentHorizontalAlignment = .right
         errorLabel.isHidden = true
 
         fromCurrencyTextField.delegate = self
@@ -51,16 +56,14 @@ class ViewController: UIViewController, CurrencyProtocolDelegate {
     }
 
     @IBAction func didTapFromCurrencyButton(_ sender: Any) {
-        let viewController = ListOfCurrenciesViewController(currencies: currencies, delegate: self)
+        let viewController = ListOfCurrenciesViewController(currencies: sortedCurrencies, delegate: self)
         self.present(viewController, animated: true)
     }
 
-
     // CurrencyProtocolDelegate
-
     func getFromCurrency(currency: String) {
         fromCurrency = currency
-        fromCurrencyButton.titleLabel?.text = currency
+        fromCurrencyButton.setTitle(currency, for: .normal)
 
         getExchangeRates(from: currency)
     }
@@ -96,12 +99,15 @@ class ViewController: UIViewController, CurrencyProtocolDelegate {
         } else {
             print("Not a valid number: \(fromCurrencyTextField.text!)")
             errorLabel.isHidden = false
+            self.toCurrencyCollectionView.isHidden = true
+            errorLabel.text = "Please enter a number"
         }
     }
 
 }
 
-extension ViewController: UICollectionViewDataSource {
+// UICollectionViewDataSource
+extension CurrencyConverterViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         currencies.count
@@ -110,17 +116,21 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ToCurrencyCell", for: indexPath) as! ToCurrencyCollectionViewCell
         cell.currencyLabel.text = String(currencyAbrv[indexPath.row].dropFirst(3))
+        cell.fullNameLabel.text = currencyFullNames[indexPath.row]
         cell.amountLabel.text = String(format: "%.2f", amounts[indexPath.row])
         return cell
     }
 }
 
-extension ViewController: UITextFieldDelegate {
+// UITextFieldDelegate
+extension CurrencyConverterViewController: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
         if fromCurrency == nil {
             fromCurrencyButton.titleLabel?.text = "USD"
+        } else {
+            fromCurrencyButton.setTitle(fromCurrency, for: .normal)
         }
         getExchangeRates(from: fromCurrency)
     }
@@ -129,9 +139,31 @@ extension ViewController: UITextFieldDelegate {
         textField.resignFirstResponder()
         if fromCurrency == nil {
             fromCurrencyButton.titleLabel?.text = "USD"
+        } else {
+            fromCurrencyButton.setTitle(fromCurrency, for: .normal)
         }
         getExchangeRates(from: fromCurrency)
         return true
+    }
+
+    func addDoneButtonOnKeyboard(){
+        let doneToolbar: UIToolbar = UIToolbar(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+        doneToolbar.barStyle = .default
+
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let done: UIBarButtonItem = UIBarButtonItem(title: "Done",
+                                                    style: .done,
+                                                    target: self,
+                                                    action: #selector(self.doneButtonAction))
+
+        doneToolbar.items = [flexSpace, done]
+        doneToolbar.sizeToFit()
+
+        fromCurrencyTextField.inputAccessoryView = doneToolbar
+    }
+
+    @objc func doneButtonAction(){
+        fromCurrencyTextField.resignFirstResponder()
     }
 
 }

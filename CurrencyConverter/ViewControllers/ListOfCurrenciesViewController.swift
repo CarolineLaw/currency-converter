@@ -14,9 +14,12 @@ class ListOfCurrenciesViewController: UITableViewController {
     var currencyFullNames = [String]()
     let delegate: CurrencyProtocolDelegate
 
-    init(currencies: [String: String], delegate: CurrencyProtocolDelegate) {
-        currencyAbrv.append(contentsOf: currencies.keys)
-        currencyFullNames.append(contentsOf: currencies.values)
+    init(currencies: Array<(key: String, value: String)> , delegate: CurrencyProtocolDelegate) {
+        for currency in currencies {
+            currencyAbrv.append(currency.key)
+            currencyFullNames.append(currency.value)
+        }
+        
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }

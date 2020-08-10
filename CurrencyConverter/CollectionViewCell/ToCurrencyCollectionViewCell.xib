@@ -17,23 +17,42 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Currency" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fC7-zB-2Tb">
-                        <rect key="frame" x="160.5" y="15" width="70.5" height="21"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <rect key="frame" x="159.5" y="15" width="72.5" height="21"/>
+                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Gm-GV-WlT">
-                        <rect key="frame" x="188" y="15" width="15.5" height="361"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Full Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="luE-SG-XLp">
+                        <rect key="frame" x="16" y="41" width="359" height="14.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8xg-LY-1gG" userLabel="Seperator">
+                        <rect key="frame" x="16" y="60.5" width="359" height="1"/>
+                        <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="cMK-L4-cI3"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Gm-GV-WlT">
+                        <rect key="frame" x="16" y="66.5" width="359" height="20.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="8xg-LY-1gG" firstAttribute="leading" secondItem="Pv8-6R-xb8" secondAttribute="leading" constant="16" id="5ov-LZ-DHT"/>
+                    <constraint firstItem="5Gm-GV-WlT" firstAttribute="leading" secondItem="Pv8-6R-xb8" secondAttribute="leading" constant="16" id="CNt-H2-xsG"/>
+                    <constraint firstItem="luE-SG-XLp" firstAttribute="top" secondItem="fC7-zB-2Tb" secondAttribute="bottom" constant="5" id="GD8-re-wF2"/>
+                    <constraint firstItem="luE-SG-XLp" firstAttribute="centerX" secondItem="fC7-zB-2Tb" secondAttribute="centerX" id="LPs-eN-b0Z"/>
                     <constraint firstItem="fC7-zB-2Tb" firstAttribute="centerX" secondItem="Pv8-6R-xb8" secondAttribute="centerX" id="MDU-dJ-pyJ"/>
-                    <constraint firstItem="5Gm-GV-WlT" firstAttribute="top" secondItem="fC7-zB-2Tb" secondAttribute="top" id="O6j-N0-Kr7"/>
-                    <constraint firstItem="5Gm-GV-WlT" firstAttribute="centerY" secondItem="Pv8-6R-xb8" secondAttribute="centerY" id="gYs-7P-wBm"/>
+                    <constraint firstItem="luE-SG-XLp" firstAttribute="leading" secondItem="Pv8-6R-xb8" secondAttribute="leading" constant="16" id="RuB-Ee-yHj"/>
+                    <constraint firstItem="5Gm-GV-WlT" firstAttribute="top" secondItem="8xg-LY-1gG" secondAttribute="bottom" constant="5" id="qrL-pP-77f"/>
+                    <constraint firstItem="8xg-LY-1gG" firstAttribute="top" secondItem="luE-SG-XLp" secondAttribute="bottom" constant="5" id="rtZ-12-5BZ"/>
                     <constraint firstItem="5Gm-GV-WlT" firstAttribute="centerX" secondItem="Pv8-6R-xb8" secondAttribute="centerX" id="ruM-Mc-vJK"/>
+                    <constraint firstItem="8xg-LY-1gG" firstAttribute="centerX" secondItem="Pv8-6R-xb8" secondAttribute="centerX" id="wC5-h0-Iue"/>
                     <constraint firstItem="fC7-zB-2Tb" firstAttribute="top" secondItem="Pv8-6R-xb8" secondAttribute="top" constant="15" id="zyF-2M-JM2"/>
                 </constraints>
             </collectionViewCellContentView>
@@ -41,6 +60,7 @@
             <connections>
                 <outlet property="amountLabel" destination="5Gm-GV-WlT" id="6Zj-vk-MzE"/>
                 <outlet property="currencyLabel" destination="fC7-zB-2Tb" id="tiZ-zp-2FR"/>
+                <outlet property="fullNameLabel" destination="luE-SG-XLp" id="tvi-mI-tPH"/>
             </connections>
             <point key="canvasLocation" x="250.00000000000003" y="-81.361607142857139"/>
         </collectionViewCell>
