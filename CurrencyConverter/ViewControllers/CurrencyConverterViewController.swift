@@ -70,8 +70,8 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
 
     func getExchangeRates(from currency: String? = nil) {
         if let amount = Double(fromCurrencyTextField.text!) {
-            api.getListOfExchangeRates(for: amount, from: currency) { exchangeRates, errorString  in
-                if let exchangeRates = exchangeRates, errorString == nil {
+            api.getListOfExchangeRates(for: amount, from: currency) { exchangeRates, error  in
+                if let exchangeRates = exchangeRates, error == nil {
                     self.toCurrencyCollectionView.isHidden = false
                     self.currencyAbrv.removeAll()
                     self.amounts.removeAll()
@@ -92,7 +92,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
 
                     self.toCurrencyCollectionView.isHidden = true
                     self.errorLabel.isHidden = false
-                    self.errorLabel.text = errorString
+                    self.errorLabel.text = error?.errorDescription
                 }
             }
 
