@@ -26,13 +26,13 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     private var currencyAbrv = [String]()
     private var currencyFullNames = [String]()
     private var amounts = [Double]()
-    private var fromCurrency: String?
+    private var fromCurrency: String = "USD"
 
     override func awakeFromNib() {
 
         api.loadListOfCurrencies { currencies in
             self.currencies = currencies
-            self.getExchangeRates()
+            self.getExchangeRates(from: "USD")
 
             self.sortedCurrencies = currencies.sorted(by: {$0.key < $1.key})
             for currency in self.sortedCurrencies {
@@ -68,7 +68,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
         getExchangeRates(from: currency)
     }
 
-    func getExchangeRates(from currency: String? = nil) {
+    func getExchangeRates(from currency: String) {
         if let amount = Double(fromCurrencyTextField.text!) {
             api.getListOfExchangeRates(for: amount, from: currency) { exchangeRates, error  in
                 if let exchangeRates = exchangeRates, error == nil {
@@ -127,21 +127,14 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
-        if fromCurrency == nil {
-            fromCurrencyButton.titleLabel?.text = "USD"
-        } else {
-            fromCurrencyButton.setTitle(fromCurrency, for: .normal)
-        }
+
+        fromCurrencyButton.setTitle(fromCurrency, for: .normal)
         getExchangeRates(from: fromCurrency)
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        if fromCurrency == nil {
-            fromCurrencyButton.titleLabel?.text = "USD"
-        } else {
-            fromCurrencyButton.setTitle(fromCurrency, for: .normal)
-        }
+        fromCurrencyButton.setTitle(fromCurrency, for: .normal)
         getExchangeRates(from: fromCurrency)
         return true
     }

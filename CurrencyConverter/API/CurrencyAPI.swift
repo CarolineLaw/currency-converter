@@ -28,11 +28,8 @@ class CurrencyAPI {
 
     private var currenciesAbrv = [String]()
 
-    // [Source: [Dest: Amount]
-    private var allExchangeRates = [String: [String: Double]]()
-
     let userDefaults = UserDefaults.standard
-    let exchangeRatesKey = "exchangeRatesKey"
+    let exchangeRatesForSourceKey = "exchangeRatesForSourceKey"
 
     private func url(with queryItems: [URLQueryItem]?, path: String) -> URL {
         var components = URLComponents()
@@ -87,63 +84,65 @@ class CurrencyAPI {
         }
     }
 
-    private func loadExchangeRates(source: String?, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
-        let query = URLQueryItem(name: "currencies", value: currenciesAbrv.joined(separator: ", "))
-        var queries = [URLQueryItem]()
-        if source == nil {
-            queries = [query, URLQueryItem(name: "format", value: "1")]
-        } else {
-            queries = [query, URLQueryItem(name: "source", value: source), URLQueryItem(name: "format", value: "1")]
-        }
-
-        load(url: url(with: queries, path: "live")) { result in
-            switch result {
-            case .success(let data):
-                let exchangeRatesData = try? JSONDecoder().decode(ExchangesResponse.self , from: data)
-                if let theData = exchangeRatesData?.quotes {
-                    completionHandler(theData, nil)
-                } else {
-                    if let error = exchangeRatesData?.error?.info {
-                        completionHandler(nil, CurrencyError.apiError(message: error))
-                    }
+    private func loadExchangeRates(source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
+        // Check userDefaults for exchange rates of source first
+        if let exchangeRatesForSource = userDefaults.object(forKey: exchangeRatesForSourceKey) as? [String: String], exchangeRatesForSource.keys.contains(source) {
+                guard let exchangeRatesJson = exchangeRatesForSource[source]?.utf8 else {
+                    completionHandler(nil, CurrencyError.apiError(message: "Couldn't read the exchange rates JSON"))
+                    return
                 }
 
-            case .failure(let error):
-                completionHandler(nil, CurrencyError.apiError(message: error.localizedDescription))
+                let exchangeRatesData = try? JSONDecoder().decode(ExchangesResponse.self, from: Data(exchangeRatesJson))
+                handleData(exchangesResponse: exchangeRatesData, completionHandler: completionHandler)
+
+        } else { // Could not find source in exchangeRatesForSource
+            let query = URLQueryItem(name: "currencies", value: currenciesAbrv.joined(separator: ", "))
+            var queries = [URLQueryItem]()
+            queries = [query, URLQueryItem(name: "source", value: source), URLQueryItem(name: "format", value: "1")]
+
+            load(url: url(with: queries, path: "live")) { result in
+                switch result {
+                case .success(let data):
+                    // Store the JSON for source
+                    let exchangeRatesJson = String(decoding: data, as: UTF8.self)
+                    self.userDefaults.setValue([source: exchangeRatesJson], forKey: self.exchangeRatesForSourceKey)
+
+                    let exchangeRatesData = try? JSONDecoder().decode(ExchangesResponse.self , from: data)
+                    self.handleData(exchangesResponse: exchangeRatesData, completionHandler: completionHandler)
+                    
+                case .failure(let error):
+                    completionHandler(nil, CurrencyError.apiError(message: error.localizedDescription))
+                }
+            }
+
+        }
+    }
+
+    func handleData(exchangesResponse: ExchangesResponse?, completionHandler: @escaping ([String: Double]?, CurrencyError?) -> Void) {
+        if let theData = exchangesResponse?.quotes {
+            completionHandler(theData, nil)
+        } else {
+            if let error = exchangesResponse?.error?.info {
+                completionHandler(nil, CurrencyError.apiError(message: error))
             }
         }
     }
 
-    func getListOfExchangeRates(for amount: Double, from source: String? = nil, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
+    func getListOfExchangeRates(for amount: Double, from source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
         var amounts = [String: Double]()
-
-//        if let savedExchangeRates = self.userDefaults.object(forKey: exchangeRatesKey) as! [String: Double]? {
-//            for rate in savedExchangeRates {
-//                amounts[rate.key] = rate.value * amount
-//            }
-
-        // TODO: FIGURE OUT WHICH SOURCE IT IS, GET THE EXCHANGE RATES FOR IT
-//
-//            completionHandler(amounts, nil)
-//        } else {
-            loadExchangeRates(source: source) { exchangeRates, error  in
-                guard let exchangeRates = exchangeRates else {
-                    completionHandler(nil, error)
-                    return
-                }
-
-                for rate in exchangeRates {
-                    amounts[rate.key] = rate.value * amount
-                }
-
-                // TODO: FIGURE OUT WHICH SOURCE IT IS, GET THE EXCHANGE RATES FOR IT, STORE IT
-                self.userDefaults.setValue(exchangeRates, forKey: self.exchangeRatesKey)
-
-                completionHandler(amounts, nil)
-
+        loadExchangeRates(source: source) { exchangeRates, error  in
+            guard let exchangeRates = exchangeRates else {
+                completionHandler(nil, error)
+                return
             }
-//        }
 
+            for rate in exchangeRates {
+                amounts[rate.key] = rate.value * amount
+            }
+
+            completionHandler(amounts, nil)
+
+        }
     }
 
 }
