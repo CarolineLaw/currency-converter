@@ -50,6 +50,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
 
         fromCurrencyTextField.delegate = self
         fromCurrencyTextField.returnKeyType = .done
+        fromCurrencyTextField.textAlignment = .right
 
         toCurrencyCollectionView.dataSource = self
         toCurrencyCollectionView.register(UINib(nibName: "ToCurrencyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "ToCurrencyCell")

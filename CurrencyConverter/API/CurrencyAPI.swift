@@ -28,8 +28,11 @@ class CurrencyAPI {
 
     private var currenciesAbrv = [String]()
 
-    let userDefaults = UserDefaults.standard
-    let exchangeRatesForSourceKey = "exchangeRatesForSourceKey"
+    private let userDefaults = UserDefaults.standard
+    private let exchangeRatesForSourceKey = "exchangeRatesForSourceKey"
+    private let sourceTimestampKey = "sourceTimeStampKey"
+    private let thirtyMinutes = 1800.0
+    
 
     private func url(with queryItems: [URLQueryItem]?, path: String) -> URL {
         var components = URLComponents()
@@ -85,8 +88,12 @@ class CurrencyAPI {
     }
 
     private func loadExchangeRates(source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
-        // Check userDefaults for exchange rates of source first
-        if let exchangeRatesForSource = userDefaults.object(forKey: exchangeRatesForSourceKey) as? [String: String], exchangeRatesForSource.keys.contains(source) {
+        if let sourceTimestamp = userDefaults.object(forKey: sourceTimestampKey) as? [String: Date],
+            let timeInterval = sourceTimestamp[source]?.timeIntervalSinceNow,
+            -timeInterval < thirtyMinutes, // Check if the time interval is less than 30 minutes
+
+            let exchangeRatesForSource = userDefaults.object(forKey: exchangeRatesForSourceKey) as? [String: String],
+            exchangeRatesForSource.keys.contains(source) {  // Check userDefaults for exchange rates of source first
                 guard let exchangeRatesJson = exchangeRatesForSource[source]?.utf8 else {
                     completionHandler(nil, CurrencyError.apiError(message: "Couldn't read the exchange rates JSON"))
                     return
@@ -106,6 +113,8 @@ class CurrencyAPI {
                     // Store the JSON for source
                     let exchangeRatesJson = String(decoding: data, as: UTF8.self)
                     self.userDefaults.setValue([source: exchangeRatesJson], forKey: self.exchangeRatesForSourceKey)
+                    let sourceTimestamp = [source: Date()]
+                    self.userDefaults.setValue(sourceTimestamp, forKey: self.sourceTimestampKey)
 
                     let exchangeRatesData = try? JSONDecoder().decode(ExchangesResponse.self , from: data)
                     self.handleData(exchangesResponse: exchangeRatesData, completionHandler: completionHandler)
@@ -118,7 +127,7 @@ class CurrencyAPI {
         }
     }
 
-    func handleData(exchangesResponse: ExchangesResponse?, completionHandler: @escaping ([String: Double]?, CurrencyError?) -> Void) {
+    private func handleData(exchangesResponse: ExchangesResponse?, completionHandler: @escaping ([String: Double]?, CurrencyError?) -> Void) {
         if let theData = exchangesResponse?.quotes {
             completionHandler(theData, nil)
         } else {
