@@ -27,6 +27,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     private var currencyFullNames = [String]()
     private var amounts = [Double]()
     private var fromCurrency: String = "USD"
+    private var typedValue: Int = 0
 
     override func awakeFromNib() {
 
@@ -51,6 +52,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
         fromCurrencyTextField.delegate = self
         fromCurrencyTextField.returnKeyType = .done
         fromCurrencyTextField.textAlignment = .right
+        fromCurrencyTextField.addTarget(self, action: #selector(myTextFieldDidChange), for: .editingChanged)
 
         toCurrencyCollectionView.dataSource = self
         toCurrencyCollectionView.register(UINib(nibName: "ToCurrencyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "ToCurrencyCell")
@@ -70,7 +72,9 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     }
 
     func getExchangeRates(from currency: String) {
-        if let amount = Double(fromCurrencyTextField.text!) {
+        var currencyString = fromCurrencyTextField.text!
+        currencyString = currencyString.replacingOccurrences(of: " ", with: "")
+        if let amount = Double(currencyString) {
             api.getListOfExchangeRates(for: amount, from: currency) { exchangeRates, error  in
                 if let exchangeRates = exchangeRates, error == nil {
                     self.toCurrencyCollectionView.isHidden = false
@@ -160,4 +164,49 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
         fromCurrencyTextField.resignFirstResponder()
     }
 
+
+    func typedValueToCurrency() -> String? {
+          let numberFormatter = NumberFormatter()
+          numberFormatter.numberStyle = .currency
+          numberFormatter.locale = Locale.current
+          let amount = Double(typedValue/100) +
+                       Double(typedValue%100)/100
+          return numberFormatter.string(from: NSNumber(value: amount))!
+    }
+
+    @objc func myTextFieldDidChange(_ textField: UITextField) {
+        if let amountString = textField.text?.currencyInputFormatting() {
+            textField.text = amountString
+        }
+    }
+}
+
+extension String {
+
+    // formatting text for currency textField
+    func currencyInputFormatting() -> String {
+
+        var number: NSNumber!
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = " "
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+
+        var amountWithPrefix = self
+
+        // remove from String: "$", ".", ","
+        let regex = try! NSRegularExpression(pattern: "[^0-9]", options: .caseInsensitive)
+        amountWithPrefix = regex.stringByReplacingMatches(in: amountWithPrefix, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, self.count), withTemplate: "")
+
+        let double = (amountWithPrefix as NSString).doubleValue
+        number = NSNumber(value: (double / 100))
+
+        // if first number is 0 or all numbers were deleted
+        guard number != 0 as NSNumber else {
+            return ""
+        }
+
+        return formatter.string(from: number)!
+    }
 }
