@@ -164,16 +164,6 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
         fromCurrencyTextField.resignFirstResponder()
     }
 
-
-    func typedValueToCurrency() -> String? {
-          let numberFormatter = NumberFormatter()
-          numberFormatter.numberStyle = .currency
-          numberFormatter.locale = Locale.current
-          let amount = Double(typedValue/100) +
-                       Double(typedValue%100)/100
-          return numberFormatter.string(from: NSNumber(value: amount))!
-    }
-
     @objc func myTextFieldDidChange(_ textField: UITextField) {
         if let amountString = textField.text?.currencyInputFormatting() {
             textField.text = amountString
