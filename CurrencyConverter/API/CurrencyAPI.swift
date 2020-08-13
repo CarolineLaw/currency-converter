@@ -105,7 +105,7 @@ class CurrencyAPI {
         } else { // Could not find source in exchangeRatesForSource
             let query = URLQueryItem(name: "currencies", value: currenciesAbrv.joined(separator: ", "))
             var queries = [URLQueryItem]()
-            queries = [query, URLQueryItem(name: "source", value: source), URLQueryItem(name: "format", value: "1")]
+            queries = [query, URLQueryItem(name: "source", value: source)]
 
             load(url: url(with: queries, path: "live")) { result in
                 switch result {
