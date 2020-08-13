@@ -105,7 +105,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
             print("Not a valid number: \(fromCurrencyTextField.text!)")
             errorLabel.isHidden = false
             self.toCurrencyCollectionView.isHidden = true
-            errorLabel.text = "Please enter a number"
+            errorLabel.text = "Please enter a number and pick a currency"
         }
     }
 
@@ -185,7 +185,7 @@ extension String {
 
         var amountWithPrefix = self
 
-        // remove from String: "$", ".", ","
+        // remove special characters from String
         let regex = try! NSRegularExpression(pattern: "[^0-9]", options: .caseInsensitive)
         amountWithPrefix = regex.stringByReplacingMatches(in: amountWithPrefix, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, self.count), withTemplate: "")
 
