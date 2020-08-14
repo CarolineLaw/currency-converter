@@ -10,7 +10,7 @@ import UIKit
 import Combine
 
 protocol CurrencyProtocolDelegate {
-    func getFromCurrency(currency: String)
+    func setCurrency(currency: String)
 }
 
 class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegate {
@@ -26,20 +26,63 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     private var currencyAbrv = [String]()
     private var currencyFullNames = [String]()
     private var amounts = [Double]()
-    private var fromCurrency: String = "USD"
     private var typedValue: Int = 0
+
+    var viewModel: CurrencyViewModel = CurrencyViewModel()
+
+    class CurrencyViewModel: ObservableObject {
+        @Published var sourceCurrency: String = "USD" {
+            didSet {
+                updateSourceCurrency()
+            }
+        }
+
+        @Published var amountString: String = "" {
+            didSet {
+                amount = Double(amountString.replacingOccurrences(of: " ", with: ""))
+            }
+        }
+
+        @Published var amount : Double?
+
+        @Published var exchangeRates : [String: Double]? = nil
+        @Published var error : String? = nil
+
+        private var api = CurrencyAPI()
+
+
+        func updateSourceCurrency() {
+            if let amount = amount {
+                api.getListOfExchangeRates(from: sourceCurrency) { exchangeRates, error  in
+                    if error == nil {
+                        self.exchangeRates = exchangeRates
+                        self.error = nil
+                    } else {
+                        self.exchangeRates = nil
+                        self.error = error?.errorDescription
+                    }
+                }
+
+            } else {
+                print("Not a valid number: \(amountString)")
+                error = "Please enter a number and pick a currency"
+            }
+
+        }
+    }
 
     override func awakeFromNib() {
 
         api.loadListOfCurrencies { currencies in
             self.currencies = currencies
-            self.getExchangeRates(from: "USD")
+//            self.getExchangeRates(from: "USD")
 
             self.sortedCurrencies = currencies.sorted(by: {$0.key < $1.key})
             for currency in self.sortedCurrencies {
                 self.currencyFullNames.append(currency.value)
             }
         }
+
     }
 
     override func viewDidLoad() {
@@ -56,6 +99,39 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
 
         toCurrencyCollectionView.dataSource = self
         toCurrencyCollectionView.register(UINib(nibName: "ToCurrencyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "ToCurrencyCell")
+
+
+        viewModel.$sourceCurrency.sink() { currency in
+            self.fromCurrencyButton.setTitle(currency, for: .normal)
+        }
+
+        viewModel.$error.sink() { error in
+            guard let error = error else {
+                self.errorLabel.isHidden = true
+                return
+            }
+            self.toCurrencyCollectionView.isHidden = true
+            self.errorLabel.isHidden = false
+            self.errorLabel.text = error
+        }
+
+        Publishers.CombineLatest(viewModel.$exchangeRates, viewModel.$amount).sink() { rates, amount in
+            guard let rates = rates, let amount = amount else {
+                self.toCurrencyCollectionView.isHidden = true
+                return
+            }
+
+            // TODO: add sorting back in
+            self.toCurrencyCollectionView.isHidden = false
+            self.currencyAbrv.removeAll()
+            self.amounts.removeAll()
+
+            self.currencyAbrv.append(contentsOf: rates.keys)
+            self.amounts.append(contentsOf: rates.values.map{ $0 * amount })
+
+            self.toCurrencyCollectionView.reloadData()
+        }
+
     }
 
     @IBAction func didTapFromCurrencyButton(_ sender: Any) {
@@ -64,49 +140,9 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     }
 
     // CurrencyProtocolDelegate
-    func getFromCurrency(currency: String) {
-        fromCurrency = currency
-        fromCurrencyButton.setTitle(currency, for: .normal)
+    func setCurrency(currency: String) {
+        viewModel.sourceCurrency = currency
 
-        getExchangeRates(from: currency)
-    }
-
-    func getExchangeRates(from currency: String) {
-        var currencyString = fromCurrencyTextField.text!
-        currencyString = currencyString.replacingOccurrences(of: " ", with: "")
-        if let amount = Double(currencyString) {
-            api.getListOfExchangeRates(for: amount, from: currency) { exchangeRates, error  in
-                if let exchangeRates = exchangeRates, error == nil {
-                    self.toCurrencyCollectionView.isHidden = false
-                    self.currencyAbrv.removeAll()
-                    self.amounts.removeAll()
-
-                    let rates = exchangeRates.sorted { (first, second) -> Bool in
-                        first < second
-                    }
-
-                    for rate in rates {
-                        self.currencyAbrv.append(rate.key)
-                        self.amounts.append(rate.value)
-                    }
-
-                    self.toCurrencyCollectionView.reloadData()
-                    self.errorLabel.isHidden = true
-
-                } else {
-
-                    self.toCurrencyCollectionView.isHidden = true
-                    self.errorLabel.isHidden = false
-                    self.errorLabel.text = error?.errorDescription
-                }
-            }
-
-        } else {
-            print("Not a valid number: \(fromCurrencyTextField.text!)")
-            errorLabel.isHidden = false
-            self.toCurrencyCollectionView.isHidden = true
-            errorLabel.text = "Please enter a number and pick a currency"
-        }
     }
 
 }
@@ -133,14 +169,12 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.resignFirstResponder()
 
-        fromCurrencyButton.setTitle(fromCurrency, for: .normal)
-        getExchangeRates(from: fromCurrency)
+        viewModel.amountString = textField.text ?? ""
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        fromCurrencyButton.setTitle(fromCurrency, for: .normal)
-        getExchangeRates(from: fromCurrency)
+        viewModel.amountString = textField.text ?? ""
         return true
     }
 

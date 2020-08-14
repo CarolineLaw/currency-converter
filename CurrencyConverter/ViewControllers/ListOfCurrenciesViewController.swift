@@ -46,7 +46,7 @@ class ListOfCurrenciesViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate.getFromCurrency(currency: currencyAbrv[indexPath.row])
+        delegate.setCurrency(currency: currencyAbrv[indexPath.row])
         self.dismiss(animated: true)
     }
 }

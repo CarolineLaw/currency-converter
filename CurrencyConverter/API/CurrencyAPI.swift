@@ -145,19 +145,16 @@ class CurrencyAPI {
             }
     }
 
-    func getListOfExchangeRates(for amount: Double, from source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
-        var amounts = [String: Double]()
+    func getListOfExchangeRates(from source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
+
         loadExchangeRates(source: source) { exchangeRates, error  in
             guard let exchangeRates = exchangeRates else {
                 completionHandler(nil, error)
                 return
             }
 
-            for rate in exchangeRates {
-                amounts[rate.key] = rate.value * amount
-            }
 
-            completionHandler(amounts, nil)
+            completionHandler(exchangeRates, nil)
 
         }
     }
