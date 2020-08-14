@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 class CurrencyAPI {
-
+    private let baseRate = "USD"
     enum CurrencyError: LocalizedError {
         case apiError(message: String)
 
@@ -147,14 +147,20 @@ class CurrencyAPI {
 
     func getListOfExchangeRates(from source: String, completionHandler: @escaping([String: Double]?, CurrencyError?) -> Void) {
 
-        loadExchangeRates(source: source) { exchangeRates, error  in
-            guard let exchangeRates = exchangeRates else {
+        loadExchangeRates(source: baseRate) { baseRates, error  in
+            guard let baseRates = baseRates else {
                 completionHandler(nil, error)
                 return
             }
-
-
-            completionHandler(exchangeRates, nil)
+            var calculatedRates = [String: Double]()
+            let baseSourcePair = "USD\(source)"
+            baseRates.forEach{ key, value in
+                                   if let sourceRate = baseRates[baseSourcePair],
+                                       let destinationRate = baseRates[key]{
+                                       calculatedRates[key] = (1/sourceRate) * destinationRate
+                                   }
+            }
+            completionHandler(calculatedRates, nil)
 
         }
     }

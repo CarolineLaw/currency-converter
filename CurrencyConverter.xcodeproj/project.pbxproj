@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D1194CF524E63B1D003C5617 /* CurrencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1194CF424E63B1D003C5617 /* CurrencyViewModel.swift */; };
 		D1CA07A024DF27E700E66AFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CA079F24DF27E700E66AFF /* AppDelegate.swift */; };
 		D1CA07A224DF27E700E66AFF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CA07A124DF27E700E66AFF /* SceneDelegate.swift */; };
 		D1CA07A424DF27E700E66AFF /* CurrencyConverterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CA07A324DF27E700E66AFF /* CurrencyConverterViewController.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D1194CF424E63B1D003C5617 /* CurrencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyViewModel.swift; sourceTree = "<group>"; };
 		D1CA079C24DF27E700E66AFF /* CurrencyConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencyConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1CA079F24DF27E700E66AFF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1CA07A124DF27E700E66AFF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				D1CA07C024E2056600E66AFF /* CollectionViewCell */,
 				D1CA07C124E2057A00E66AFF /* API */,
 				D1CA07A824DF27EA00E66AFF /* Assets.xcassets */,
+				D1194CF424E63B1D003C5617 /* CurrencyViewModel.swift */,
 			);
 			path = CurrencyConverter;
 			sourceTree = "<group>";
@@ -188,6 +191,7 @@
 				D1CA07A024DF27E700E66AFF /* AppDelegate.swift in Sources */,
 				D1CA07B824DF464100E66AFF /* ListOfCurrenciesViewController.swift in Sources */,
 				D1CA07A224DF27E700E66AFF /* SceneDelegate.swift in Sources */,
+				D1194CF524E63B1D003C5617 /* CurrencyViewModel.swift in Sources */,
 				D1CA07BE24E0656F00E66AFF /* ExchangeRatesResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CurrencyConverterViewController.swift
 //  CurrencyConverter
 //
 //  Created by Caroline Law on 8/8/20.
@@ -9,7 +9,7 @@
 import UIKit
 import Combine
 
-protocol CurrencyProtocolDelegate {
+protocol CurrencyProtocolDelegate: AnyObject {
     func setCurrency(currency: String)
 }
 
@@ -20,6 +20,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     @IBOutlet var toCurrencyCollectionView: UICollectionView!
     @IBOutlet var errorLabel: UILabel!
 
+    // Put this in a proper view model
     private var api = CurrencyAPI()
     private var currencies = [String: String]()
     private var sortedCurrencies = Array<(key: String, value: String)>()
@@ -28,67 +29,25 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
     private var amounts = [Double]()
     private var typedValue: Int = 0
 
-    var viewModel: CurrencyViewModel = CurrencyViewModel()
+    private var cancellable = Set<AnyCancellable>()
 
-    class CurrencyViewModel: ObservableObject {
-        @Published var sourceCurrency: String = "USD" {
-            didSet {
-                updateSourceCurrency()
-            }
-        }
+    private var viewModel: CurrencyViewModel = CurrencyViewModel()
 
-        @Published var amountString: String = "" {
-            didSet {
-                amount = Double(amountString.replacingOccurrences(of: " ", with: ""))
-            }
-        }
-
-        @Published var amount : Double?
-
-        @Published var exchangeRates : [String: Double]? = nil
-        @Published var error : String? = nil
-
-        private var api = CurrencyAPI()
-
-
-        func updateSourceCurrency() {
-            if let amount = amount {
-                api.getListOfExchangeRates(from: sourceCurrency) { exchangeRates, error  in
-                    if error == nil {
-                        self.exchangeRates = exchangeRates
-                        self.error = nil
-                    } else {
-                        self.exchangeRates = nil
-                        self.error = error?.errorDescription
-                    }
-                }
-
-            } else {
-                print("Not a valid number: \(amountString)")
-                error = "Please enter a number and pick a currency"
-            }
-
-        }
-    }
-
-    override func awakeFromNib() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addDoneButtonOnKeyboard()
 
         api.loadListOfCurrencies { currencies in
             self.currencies = currencies
-//            self.getExchangeRates(from: "USD")
 
             self.sortedCurrencies = currencies.sorted(by: {$0.key < $1.key})
             for currency in self.sortedCurrencies {
                 self.currencyFullNames.append(currency.value)
+                self.viewModel.amount = 0
+                self.viewModel.sourceCurrency = "USD"
             }
         }
 
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        addDoneButtonOnKeyboard()
         fromCurrencyButton.contentHorizontalAlignment = .right
         errorLabel.isHidden = true
 
@@ -100,10 +59,13 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
         toCurrencyCollectionView.dataSource = self
         toCurrencyCollectionView.register(UINib(nibName: "ToCurrencyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "ToCurrencyCell")
 
-
         viewModel.$sourceCurrency.sink() { currency in
             self.fromCurrencyButton.setTitle(currency, for: .normal)
-        }
+        }.store(in: &cancellable)
+
+        viewModel.$amountString.sink() { amount in
+            self.fromCurrencyTextField.text = amount
+        }.store(in: &cancellable)
 
         viewModel.$error.sink() { error in
             guard let error = error else {
@@ -113,7 +75,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
             self.toCurrencyCollectionView.isHidden = true
             self.errorLabel.isHidden = false
             self.errorLabel.text = error
-        }
+        }.store(in: &cancellable)
 
         Publishers.CombineLatest(viewModel.$exchangeRates, viewModel.$amount).sink() { rates, amount in
             guard let rates = rates, let amount = amount else {
@@ -121,28 +83,29 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
                 return
             }
 
-            // TODO: add sorting back in
             self.toCurrencyCollectionView.isHidden = false
             self.currencyAbrv.removeAll()
             self.amounts.removeAll()
 
-            self.currencyAbrv.append(contentsOf: rates.keys)
-            self.amounts.append(contentsOf: rates.values.map{ $0 * amount })
+            for rate in rates.sorted(by: {$0.key < $1.key}) {
+                self.currencyAbrv.append(rate.key)
+                self.amounts.append(rate.value * amount)
+            }
 
             self.toCurrencyCollectionView.reloadData()
-        }
+        }.store(in: &cancellable)
 
     }
 
     @IBAction func didTapFromCurrencyButton(_ sender: Any) {
-        let viewController = ListOfCurrenciesViewController(currencies: sortedCurrencies, delegate: self)
+        let viewController = ListOfCurrenciesViewController(currencies: sortedCurrencies)
+        viewController.delegate = self
         self.present(viewController, animated: true)
     }
 
     // CurrencyProtocolDelegate
     func setCurrency(currency: String) {
         viewModel.sourceCurrency = currency
-
     }
 
 }
@@ -151,7 +114,7 @@ class CurrencyConverterViewController: UIViewController, CurrencyProtocolDelegat
 extension CurrencyConverterViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        currencies.count
+        currencyAbrv.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -200,7 +163,7 @@ extension CurrencyConverterViewController: UITextFieldDelegate {
 
     @objc func myTextFieldDidChange(_ textField: UITextField) {
         if let amountString = textField.text?.currencyInputFormatting() {
-            textField.text = amountString
+            viewModel.amountString = amountString
         }
     }
 }

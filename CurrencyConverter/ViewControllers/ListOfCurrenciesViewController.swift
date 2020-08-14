@@ -12,15 +12,14 @@ class ListOfCurrenciesViewController: UITableViewController {
 
     var currencyAbrv = [String]()
     var currencyFullNames = [String]()
-    let delegate: CurrencyProtocolDelegate
+    weak var delegate: CurrencyProtocolDelegate?
 
-    init(currencies: Array<(key: String, value: String)> , delegate: CurrencyProtocolDelegate) {
+    init(currencies: Array<(key: String, value: String)>) {
         for currency in currencies {
             currencyAbrv.append(currency.key)
             currencyFullNames.append(currency.value)
         }
-        
-        self.delegate = delegate
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -46,7 +45,7 @@ class ListOfCurrenciesViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegate.setCurrency(currency: currencyAbrv[indexPath.row])
+        delegate?.setCurrency(currency: currencyAbrv[indexPath.row])
         self.dismiss(animated: true)
     }
 }
